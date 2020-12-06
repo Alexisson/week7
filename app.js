@@ -7,6 +7,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
         ...CORS
     }
     app
+        
         .use(bodyParser.urlencoded({extended:true}))       
         .all('/login/', r => {
             r.res.set(headers).send('itmo307709');
@@ -58,19 +59,23 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
             
         })
         .all('/render/',async r=>{
-            r.res.set(headers);
-            // const {random2, random3} = req.body;
+            // r.res.set(headers);
+            let jsondata = r.body;
+            
             http.get(r.query.addr, async function(response) {
                 let data = '';
                 await response.on('data',function (chunk){
                     data+=chunk;
                 }).on('end',()=>{})
-                // data = data.replace('random2',random2)
-                // data = data.replace('random3',random3)
-                await fs.writeFile("./views/render.pug", data, function(error){
+                await fs.writeFile("./views/index.pug", data, function(error){
                     if(error) throw error;
+                    r.res.render('index',{ 
+                        login: 'itmo307709', 
+                        random2: jsondata.random2,
+                        random3: jsondata.random3
+                    })
                 })
-                r.res.render('render')
+
             })
         })
         .use(({res:r})=>r.status(404).set(hu).send('itmo307709'))
