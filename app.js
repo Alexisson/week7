@@ -1,8 +1,10 @@
 
 export default function appScr(express, bodyParser, fs, crypto, http, CORS, User, m) {
     const app = express();
-    const hu = {'Content-Type':'text/html; charset=utf-8'}
-    let headers = {
+    const headersHTML = {
+        'Content-Type':'text/html; charset=utf-8',
+        ...CORS}
+    let headersTEXT = {
         'Content-Type':'text/plain',
         ...CORS
     }
@@ -10,20 +12,20 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
         
         .use(bodyParser.urlencoded({extended:true}))       
         .all('/login/', r => {
-            r.res.set(headers).send('itmo307709');
+            r.res.set(headersTEXT).send('itmo307709');
         })
         .all('/code/', r => {
-            r.res.set(headers)
+            r.res.set(headersTEXT)
             fs.readFile(import.meta.url.substring(7),(err, data) => {
                 if (err) throw err;
                 r.res.end(data);
               });           
         })
         .all('/sha1/:input/', r => {
-            r.res.set(headers).send(crypto.createHash('sha1').update(r.params.input).digest('hex'))
+            r.res.set(headersTEXT).send(crypto.createHash('sha1').update(r.params.input).digest('hex'))
         })
         .get('/req/', (req, res) =>{
-            res.set(headers);
+            res.set(headersTEXT);
             let data = '';
             http.get(req.query.addr, async function(response) {
                 await response.on('data',function (chunk){
@@ -33,12 +35,12 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
             })
         })
         .post('/req/', r =>{
-            r.res.set(headers);
+            r.res.set(headersTEXT);
             const {addr} = req.body;
             r.res.send(addr)
         })
         .post('/insert/', async r=>{
-            r.res.set(headers);
+            r.res.set(headersTEXT);
             const {login,password,URL}=r.body;
             const newUser = new User({login,password});
             try{
@@ -59,7 +61,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
             
         })
         .all('/render/',async r=>{
-            // r.res.set(headers);
+            r.res.set(headersHTML);
             let jsondata = r.body;
             
             http.get(r.query.addr, async function(response) {
@@ -78,7 +80,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
 
             })
         })
-        .use(({res:r})=>r.status(404).set(hu).send('itmo307709'))
+        .use(({res:r})=>r.status(404).set(headersHTML).send('itmo307709'))
         .set('view engine','pug')
     return app;
 }
