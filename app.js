@@ -57,7 +57,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
         .post('/wordpress/', r=>{
             
         })
-        .all('/render/',r=>{
+        .all('/render/',async r=>{
             //r.res.set(headers);
             //const {random2, random3} = req.body;
             http.get(r.query.addr, async function(response) {
