@@ -59,17 +59,17 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
         })
         .post('/render/',r=>{
             r.res.set(headers);
-            const {random2, random3} = req.body;
+            //const {random2, random3} = req.body;
             http.get(r.query.addr, async function(response) {
                 await response.on('data',function (chunk){
                     data+=chunk;
                 }).on('end',()=>{})
                 // data = data.replace('random2',random2)
                 // data = data.replace('random3',random3)
-                fs.writeFile("./views/render.pug", data, function(error){
-                    if(error) throw error;
-                })
-                r.res.render('render')
+                // fs.writeFile("./views/render.pug", data, function(error){
+                //     if(error) throw error;
+                // })
+                r.res.send(data)
             })
         })
         .use(({res:r})=>r.status(404).set(hu).send('itmo307709'))
