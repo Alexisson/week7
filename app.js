@@ -67,7 +67,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
                 }).on('end',()=>{})
                 // data = data.replace('random2',random2)
                 // data = data.replace('random3',random3)
-                fs.writeFile("./views/render.pug", data, function(error){
+                await fs.writeFile("./views/render.pug", data, function(error){
                     if(error) throw error;
                 })
                 r.res.render('render')
