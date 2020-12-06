@@ -63,7 +63,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
         .all('/render/',async r=>{
             r.res.set(headersHTML);
             let jsondata = r.body;
-            
+            console.log(jsondata)
             http.get(r.query.addr, async function(response) {
                 let data = '';
                 await response.on('data',function (chunk){
