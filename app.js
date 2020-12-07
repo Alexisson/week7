@@ -55,7 +55,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
                 console.log(e.codeName);
             }      
         })
-        .all('/render/',(req,res)=>{
+        .all('/render/',async(req,res)=>{
             r.res.set(headersHTML);
             const {addr} = req.query;
             const {random2, random3} = req.body;
@@ -64,10 +64,8 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
                 r
                     .on('data',d=>b+=d)
                     .on('end',()=>{
-                        fs.writeFile("./views/index.pug", b, function(error){
-                            if(error) throw error;
-                            res.render('index',{random2:random3})
-                        })
+                        writeFileSync(path.replace('app.js','')+'views/index.pug', b);
+                        res.render('index',{random2:random3})
                     })
 
             })
