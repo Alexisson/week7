@@ -1,22 +1,20 @@
 
 export default function appScr(express, bodyParser, fs, crypto, http, CORS, User, m) {
     const app = express();
-    const headersHTML = {
-        'Content-Type':'text/html; charset=utf-8',
-        ...CORS}
-    let headersTEXT = {
-        'Content-Type':'text/plain',
-        ...CORS
-    }
-    app
-        
-        .use(bodyParser.urlencoded({extended:true}))       
+    const path = import.meta.url.substring(7);
+    const headersHTML = {'Content-Type':'text/html; charset=utf-8',...CORS}
+    const headersTEXT = {'Content-Type':'text/plain',...CORS}
+    const headersJSON={'Content-Type':'application/json',...CORS}
+
+    app    
+        .use(bodyParser.urlencoded({extended:true}))  
+        .use(bodyParser.json()) 
         .all('/login/', r => {
             r.res.set(headersTEXT).send('itmo307709');
         })
         .all('/code/', r => {
             r.res.set(headersTEXT)
-            fs.readFile(import.meta.url.substring(7),(err, data) => {
+            fs.readFile(path,(err, data) => {
                 if (err) throw err;
                 r.res.end(data);
               });           
@@ -36,7 +34,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
         })
         .post('/req/', r =>{
             r.res.set(headersTEXT);
-            const {addr} = req.body;
+            const {addr} = r.body;
             r.res.send(addr)
         })
         .post('/insert/', async r=>{
@@ -57,26 +55,18 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
                 console.log(e.codeName);
             }      
         })
-        .post('/wordpress/', r=>{
-            
-        })
-        .all('/render/',async r=>{
+        .all('/render/',(req,res)=>{
             r.res.set(headersHTML);
-            let jsondata = r.body;
-            console.log(jsondata)
-            http.get(r.query.addr, async function(response) {
-                let data = '';
-                await response.on('data',function (chunk){
-                    data+=chunk;
-                }).on('end',()=>{})
-                await fs.writeFile("./views/index.pug", data, function(error){
-                    if(error) throw error;
-                    r.res.render('index',{ 
-                        login: 'itmo307709', 
-                        random2: jsondata.random2,
-                        random3: jsondata.random3
+            const {addr} = req.query;
+            const {random2, random3} = req.body;
+            
+            http.get(addr,(r, b='') => {
+                r
+                    .on('data',d=>b+=d)
+                    .on('end',()=>{
+                        fs.writeFileSync(path.replace('app.js','')+'views/index.pug', b);
+                        res.render('index',{random2:random3})
                     })
-                })
 
             })
         })
