@@ -63,12 +63,11 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
             
             http.get(addr,(r, b='') => {
                 r
-                    .on('data',d=>b+=d)
-                    .on('end',()=>{
-                        fs.writeFileSync('views/index.pug', b);
-                        res.render('index',{login:'itmo307709',random2,random3})
-                    })
-
+                .on('data',d=>b+=d)
+                .on('end',()=>{
+                    fs.writeFileSync('views/index.pug', b);
+                    res.render('index',{login:'itmo307709',random2,random3})
+                })
             })
         })
         .use(({res:r})=>r.status(404).set(headersHTML).send('itmo307709'))
