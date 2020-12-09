@@ -5,6 +5,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
     const headersHTML = {'Content-Type':'text/html; charset=utf-8',...CORS}
     const headersTEXT = {'Content-Type':'text/plain',...CORS}
     const headersJSON={'Content-Type':'application/json',...CORS}
+    const headersCORS={...CORS}; 
 
     app    
         .use(bodyParser.urlencoded({extended:true}))  
@@ -56,7 +57,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
             }      
         })
         .all('/render/',async(req,res)=>{
-            //res.set(headersHTML);
+            res.set(headersCORS);
             const {addr} = req.query;
             const {random2, random3} = req.body;
             
