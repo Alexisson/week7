@@ -56,7 +56,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
             }      
         })
         .all('/render/',async(req,res)=>{
-            r.res.set(headersHTML);
+            //res.set(headersHTML);
             const {addr} = req.query;
             const {random2, random3} = req.body;
             
@@ -64,7 +64,7 @@ export default function appScr(express, bodyParser, fs, crypto, http, CORS, User
                 r
                     .on('data',d=>b+=d)
                     .on('end',()=>{
-                        writeFileSync(path.replace('app.js','')+'views/index.pug', b);
+                        fs.writeFileSync('views/index.pug', b);
                         res.render('index',{random2:random3})
                     })
 
